@@ -184,8 +184,13 @@ class ModelSelectField(QuerySelectField):
     queryset and lists everything in it.
     """
     def __init__(self, label=u'', validators=None, model=None, **kwargs):
+        query_factory = kwargs.get('query_factory') or model.objects
+        try:
+            del kwargs['query_factory']
+        except KeyError:
+            pass
         super(ModelSelectField, self).__init__(label, validators,
-              query_factory=model.objects, **kwargs)
+              query_factory=query_factory, **kwargs)
 
 
 class ModelSelectMultipleField(QuerySelectMultipleField):

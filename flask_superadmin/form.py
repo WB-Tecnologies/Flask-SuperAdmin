@@ -2,7 +2,7 @@ import time
 import datetime
 
 from flask.ext import wtf
-from wtforms import fields, widgets
+from wtforms import fields, widgets, FileField
 
 from flask_superadmin.babel import gettext
 from flask import request
@@ -26,7 +26,7 @@ class BaseForm(wtf.Form):
         """
         # TODO: Optimize me
         for f in self:
-            if isinstance(f, wtf.FileField):
+            if isinstance(f, FileField):
                 return True
 
         return False
@@ -112,7 +112,7 @@ class FileFieldWidget(object):
         input_file = '<input %s>' % widgets.html_params(name=field.name, type='file')
         return widgets.HTMLString('%s<br />Current: %s<br />%s <label for="%s">Clear file</label>'%(input_file, escape(field._value()), self.widget_checkbox(field._clear), field._clear.id))
 
-class FileField(wtf.FileField):
+class FileField(FileField):
     widget = FileFieldWidget()
     def __init__(self,*args,**kwargs):
         self.clearable = kwargs.pop('clearable', True)

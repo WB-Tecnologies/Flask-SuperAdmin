@@ -73,7 +73,7 @@ class BaseModelAdmin(BaseView):
     hidden_fields = []
 
     search_fields = None
-    actions = None
+    actions = []
 
     field_overrides = {}
 
@@ -280,9 +280,13 @@ class BaseModelAdmin(BaseView):
         # Grab parameters from URL
         if request.method == 'POST':
             id_list = request.form.getlist('_selected_action')
-            if id_list and (request.form.get('action-delete') or \
-                request.form.get('action', None) == 'delete'):
-                return self.delete(*id_list)
+            if id_list:
+                action = request.form.get('action', None)
+                if (request.form.get('action-delete')) or \
+                            (action == 'delete'):
+                    return self.delete(*id_list)
+                if (action is not None) and hasattr(self, action):
+                    return getattr(self, action)(*id_list)
 
         sort, sort_desc = self.sort
         page = self.page

@@ -318,7 +318,7 @@ class BaseModelAdmin(BaseView):
                     return self.dispatch_save_redirect(instance)
                 except Exception, ex:
                     print traceback.format_exc()
-                    flash(gettext('Failed to edit model. %(error)s', error=str(ex)),
+                    flash(gettext(u'Failed to edit model. %(error)s', error=str(ex)),
                           'error')
         else:
             form = Form(obj=instance)

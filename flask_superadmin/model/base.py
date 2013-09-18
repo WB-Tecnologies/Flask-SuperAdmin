@@ -228,8 +228,8 @@ class BaseModelAdmin(BaseView):
                             self.session.rollback()
                     except AttributeError:
                         pass
-                    flash(gettext('Failed to add model. %(error)s',
-                          error=str(ex)), 'error')
+                    flash(gettext(u'Failed to add model. %(error)s',
+                          error=unicode(ex)), 'error')
 
         else:
             form = Form(obj=self.model())

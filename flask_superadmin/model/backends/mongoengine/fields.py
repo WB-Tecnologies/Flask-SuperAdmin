@@ -67,11 +67,11 @@ class QuerySelectField(SelectFieldBase):
         self._object_list = None
 
     def _get_data(self):
-        if self._formdata is not None:
-            for pk, obj in self._get_object_list():
-                if pk == self._formdata:
-                    self._set_data(obj)
-                    break
+        #if self._formdata is not None:
+        #    for pk, obj in self._get_object_list():
+        #        if pk == self._formdata:
+        #            self._set_data(obj)
+        #            break
         return self._data
 
     def _set_data(self, data):

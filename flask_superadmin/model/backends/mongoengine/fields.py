@@ -101,7 +101,7 @@ class QuerySelectField(SelectFieldBase):
 
         self.query_factory.rewind()
         for obj in self.query_factory:
-            label = self.label_attr and getattr(obj, self.label_attr) or obj
+            label = self.get_label(obj)
             if isinstance(self.data, list):
                 selected = obj in self.data
             else:

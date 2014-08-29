@@ -105,7 +105,7 @@ class QuerySelectField(SelectFieldBase):
             if isinstance(self.data, list):
                 selected = obj in self.data
             else:
-                selected = self._is_selected(obj)
+                selected = obj == self.data
             yield (obj.id, label, selected)
 
     def process_formdata(self, valuelist):

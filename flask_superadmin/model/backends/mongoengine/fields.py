@@ -96,11 +96,11 @@ class QuerySelectField(SelectFieldBase):
         if self.allow_blank:
             yield ('__None', self.blank_text, self.data is None)
 
-        if self.query is None:
+        if self.query_factory is None:
             return
 
-        self.query.rewind()
-        for obj in self.query:
+        self.query_factory.rewind()
+        for obj in self.query_factory:
             label = self.label_attr and getattr(obj, self.label_attr) or obj
             if isinstance(self.data, list):
                 selected = obj in self.data
@@ -113,12 +113,12 @@ class QuerySelectField(SelectFieldBase):
             if valuelist[0] == '__None':
                 self.data = None
             else:
-                if self.query is None:
+                if self.query_factory is None:
                     self.data = None
                     return
 
                 try:
-                    obj = self.query.clone().get(id=valuelist[0])
+                    obj = self.query_factory.clone().get(id=valuelist[0])
                     self.data = obj
                 except DoesNotExist:
                     self.data = None

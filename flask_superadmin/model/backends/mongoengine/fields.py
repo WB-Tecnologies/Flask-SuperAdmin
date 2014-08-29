@@ -96,7 +96,7 @@ class QuerySelectField(SelectFieldBase):
         if self.allow_blank:
             yield ('__None', self.blank_text, self.data is None)
 
-         if self.queryset is None:
+        if self.queryset is None:
             return
 
         self.queryset.rewind()

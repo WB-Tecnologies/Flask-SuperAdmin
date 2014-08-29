@@ -66,55 +66,67 @@ class QuerySelectField(SelectFieldBase):
         self.query = None
         self._object_list = None
 
-    def _get_data(self):
-        #if self._formdata is not None:
-        #    for pk, obj in self._get_object_list():
-        #        if pk == self._formdata:
-        #            self._set_data(obj)
-        #            break
-        return self._data
+    # def _get_data(self):
+    #     #if self._formdata is not None:
+    #     #    for pk, obj in self._get_object_list():
+    #     #        if pk == self._formdata:
+    #     #            self._set_data(obj)
+    #     #            break
+    #     return self._data
 
-    def _set_data(self, data):
-        self._data = data
-        self._formdata = None
+    # def _set_data(self, data):
+    #     self._data = data
+    #     self._formdata = None
 
-    data = property(_get_data, _set_data)
+    # data = property(_get_data, _set_data)
 
-    def _get_object_list(self):
+    # def _get_object_list(self):
 
-        if not self.query_factory:
-            return []
+    #     if not self.query_factory:
+    #         return []
 
-        self.query_factory.rewind()
-        if self._object_list is None:
-            query = self.query_factory
-            get_pk = self.get_pk
-            self._object_list = list((str(get_pk(obj)), obj) for obj in query)
-        return self._object_list
+    #     self.query_factory.rewind()
+    #     if self._object_list is None:
+    #         query = self.query_factory
+    #         get_pk = self.get_pk
+    #         self._object_list = list((str(get_pk(obj)), obj) for obj in query)
+    #     return self._object_list
 
     def iter_choices(self):
         if self.allow_blank:
             yield ('__None', self.blank_text, self.data is None)
 
-        for pk, obj in self._get_object_list():
-            yield (pk, self.get_label(obj), obj == self.data)
+         if self.queryset is None:
+            return
+
+        self.queryset.rewind()
+        for obj in self.queryset:
+            label = self.label_attr and getattr(obj, self.label_attr) or obj
+            if isinstance(self.data, list):
+                selected = obj in self.data
+            else:
+                selected = self._is_selected(obj)
+            yield (obj.id, label, selected)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            if self.allow_blank and valuelist[0] == '__None':
+            if valuelist[0] == '__None':
                 self.data = None
             else:
-                self._data = None
-                self._formdata = valuelist[0]
+                if self.queryset is None:
+                    self.data = None
+                    return
+
+                try:
+                    obj = self.queryset.clone().get(id=valuelist[0])
+                    self.data = obj
+                except DoesNotExist:
+                    self.data = None
 
     def pre_validate(self, form):
-        return
         if not self.allow_blank or self.data is not None:
-            for pk, obj in self._get_object_list():
-                if self.data == obj:
-                    break
-            else:
-                raise ValidationError(self.gettext('Not a valid choice'))
+            if not self.data:
+                raise ValidationError(_(u'Not a valid choice'))
 
 
 class QuerySelectMultipleField(QuerySelectField):
